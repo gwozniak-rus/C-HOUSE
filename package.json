@@ -17,10 +17,16 @@
     "react-native": "0.86.2",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.0.1",
+    "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
+    "babel-preset-expo": "~57.0.0",
+    "jest": "~29.7.0",
+    "jest-expo": "~57.0.4",
     "supabase": "^2.112.0",
     "typescript": "~6.0.3"
   },
@@ -28,7 +34,28 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "gen:types": "supabase gen types typescript --local > lib/database.types.ts",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "setupFiles": [
+      "<rootDir>/jest.setup.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/__tests__/test-utils/"
+    ],
+    "collectCoverageFrom": [
+      "lib/**/*.{ts,tsx}",
+      "components/**/*.{ts,tsx}",
+      "navigation/**/*.{ts,tsx}",
+      "screens/**/*.{ts,tsx}",
+      "!lib/database.types.ts"
+    ]
+  }
 }
