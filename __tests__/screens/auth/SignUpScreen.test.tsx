@@ -31,7 +31,8 @@ describe('<SignUpScreen />', () => {
     mockSignUp.mockResolvedValue({ error: null });
     await renderScreen();
 
-    await fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Alex Coach');
+    await fireEvent.changeText(screen.getByPlaceholderText('First name'), 'Alex');
+    await fireEvent.changeText(screen.getByPlaceholderText('Last name'), 'Coach');
     await fireEvent.changeText(screen.getByPlaceholderText('Email'), 'alex@example.com');
     await fireEvent.changeText(screen.getByPlaceholderText('Password'), 'hunter2');
     await fireEvent.press(screen.getByTestId('sign-up-submit'));
@@ -40,7 +41,7 @@ describe('<SignUpScreen />', () => {
       expect(mockSignUp).toHaveBeenCalledWith({
         email: 'alex@example.com',
         password: 'hunter2',
-        options: { data: { display_name: 'Alex Coach' } },
+        options: { data: { first_name: 'Alex', last_name: 'Coach' } },
       })
     );
     expect(Alert.alert).toHaveBeenCalledWith(

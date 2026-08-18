@@ -17,7 +17,8 @@ import type { AuthStackParamList } from '../../navigation/AuthNavigator';
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 
 export function SignUpScreen({ navigation }: Props) {
-  const [displayName, setDisplayName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -27,7 +28,9 @@ export function SignUpScreen({ navigation }: Props) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: displayName } },
+      // Read by the handle_new_user() trigger (profiles migration), which
+      // composes display_name from these.
+      options: { data: { first_name: firstName, last_name: lastName } },
     });
     setSubmitting(false);
     if (error) {
@@ -45,12 +48,22 @@ export function SignUpScreen({ navigation }: Props) {
       <Text style={styles.title}>Create account</Text>
 
       <TextInput
+        testID="sign-up-first-name"
         style={styles.input}
-        placeholder="Name"
+        placeholder="First name"
         autoCapitalize="words"
-        autoComplete="name"
-        value={displayName}
-        onChangeText={setDisplayName}
+        autoComplete="given-name"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+      <TextInput
+        testID="sign-up-last-name"
+        style={styles.input}
+        placeholder="Last name"
+        autoCapitalize="words"
+        autoComplete="family-name"
+        value={lastName}
+        onChangeText={setLastName}
       />
       <TextInput
         style={styles.input}

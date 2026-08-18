@@ -23,6 +23,7 @@ __tests__/
   test-utils/               # shared test helpers (not test files themselves)
     mockSupabase.ts         # fake `supabase` client
     mockPushEnv.ts           # fake browser Push API + Platform.OS='web'
+    renderWithProviders.tsx  # render() wrapped in a fresh, retry/gcTime-off QueryClient
 jest.setup.ts              # global test setup (env vars, AsyncStorage mock)
 babel.config.js             # babel-preset-expo, required for jest-expo
 ```
@@ -123,7 +124,20 @@ const mockSupabase = supabase as unknown as MockSupabase; // now safe to use in 
 `jest.fn()`s, and a bare `from` you configure per-test (Supabase's query
 builder is both chainable *and* awaitable at every step — see
 `subscription.test.ts` for the pattern of building `{ select, eq, maybeSingle }`
-objects inline per test rather than trying to generalize it).
+objects inline per test rather than trying to generalize it). It also exposes
+a bare `rpc` for RPC-based calls like `redeem_invite_code` (see `teams.test.ts`).
+
+### 6. A screen or hook that uses `@tanstack/react-query`
+
+Wrap it in a `QueryClientProvider` — `renderWithProviders()` from
+`test-utils/renderWithProviders.tsx` does this with a fresh client per call
+(retries and `gcTime` both off, so a failed/pending query doesn't retry into
+a timeout or leave a GC timer alive past the test). For a screen test this
+usually means mocking `lib/teams-queries` (or `lib/team-context`) directly
+with `jest.fn()` return values, the same way screens mock `useAuth` — see
+`RosterScreen.test.tsx` / `JoinTeamScreen.test.tsx`. Reserve exercising the
+real hooks for `lib/teams.ts` unit tests (mock `lib/supabase` instead) and
+`team-context.test.tsx` (mock `lib/teams-queries`'s `useMyTeams`).
 
 ### 5. Module-level state (e.g. `lib/push/register.ts`'s memoized promise)
 

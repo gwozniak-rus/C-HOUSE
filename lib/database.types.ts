@@ -714,21 +714,30 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string
+          first_name: string | null
           id: string
+          last_name: string | null
+          phone: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           display_name: string
+          first_name?: string | null
           id: string
+          last_name?: string | null
+          phone?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -917,6 +926,7 @@ export type Database = {
           invited_via_code_id: string | null
           joined_at: string
           role: string
+          status: string
           team_id: string
           user_id: string
         }
@@ -924,6 +934,7 @@ export type Database = {
           invited_via_code_id?: string | null
           joined_at?: string
           role: string
+          status?: string
           team_id: string
           user_id: string
         }
@@ -931,6 +942,7 @@ export type Database = {
           invited_via_code_id?: string | null
           joined_at?: string
           role?: string
+          status?: string
           team_id?: string
           user_id?: string
         }
@@ -1077,7 +1089,19 @@ export type Database = {
         Args: { p_team_id: string; p_user_id?: string }
         Returns: boolean
       }
+      notify_on_publish: {
+        Args: { p_content_type: string; p_record_id: string; p_team_id: string }
+        Returns: undefined
+      }
       packing_list_item_mode: { Args: { p_item_id: string }; Returns: string }
+      preview_invite_code: {
+        Args: { p_code: string }
+        Returns: {
+          role: string
+          team_id: string
+          team_name: string
+        }[]
+      }
       redeem_invite_code: { Args: { p_code: string }; Returns: string }
       shares_team_with: {
         Args: { p_other_user_id: string; p_user_id?: string }

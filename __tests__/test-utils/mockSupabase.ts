@@ -38,6 +38,11 @@ export function createMockSupabase() {
       signOut: jest.fn(() => Promise.resolve({ error: null })),
     },
     from: jest.fn(),
+    // Return value configured per-test, e.g.:
+    //   mockSupabase.rpc.mockResolvedValueOnce({ data: [...], error: null })
+    rpc: jest.fn<Promise<{ data: unknown; error: { message: string } | null }>, [string, unknown?]>(
+      () => Promise.resolve({ data: null, error: null })
+    ),
   };
 }
 
