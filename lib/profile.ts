@@ -1,11 +1,11 @@
-import { supabase } from './supabase';
-import type { Profile } from './types';
+import { supabase } from "./supabase";
+import type { Profile } from "./types";
 
 export async function getProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
     .maybeSingle();
 
   if (error) throw error;
@@ -19,16 +19,16 @@ export async function getProfile(userId: string): Promise<Profile | null> {
  */
 export async function updateProfile(
   userId: string,
-  input: { firstName: string; lastName: string; phone?: string | null }
+  input: { firstName: string; lastName: string; phone?: string | null },
 ): Promise<Profile> {
   const { data, error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update({
       first_name: input.firstName.trim() || null,
       last_name: input.lastName.trim() || null,
       phone: input.phone?.trim() || null,
     })
-    .eq('id', userId)
+    .eq("id", userId)
     .select()
     .single();
 

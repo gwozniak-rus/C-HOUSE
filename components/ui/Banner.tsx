@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
 
-type Tone = 'error' | 'info' | 'success';
+type Tone = "error" | "info" | "success";
 
 type Props = {
   message: string | null;
@@ -17,12 +17,18 @@ type Props = {
 // button just stops spinning and nothing explains why. Rendering the message
 // in the page works identically on native and web, and is what the screen
 // tests assert against.
-export function Banner({ message, tone = 'error', testID }: Props) {
+export function Banner({ message, tone = "error", testID }: Props) {
   if (!message) return null;
 
   return (
-    <View testID={testID} style={[styles.base, styles[tone]]} accessibilityRole="alert">
-      <Text style={[styles.text, tone === 'error' && styles.textError]}>{message}</Text>
+    <View
+      testID={testID}
+      style={[styles.base, styles[tone]]}
+      accessibilityRole="alert"
+    >
+      <Text style={[styles.text, tone === "error" && styles.textError]}>
+        {message}
+      </Text>
     </View>
   );
 }
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   error: {
-    backgroundColor: '#fdf0ee',
+    backgroundColor: "#fdf0ee",
     borderColor: colors.danger,
   },
   info: {
@@ -43,8 +49,8 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSubtle,
   },
   success: {
-    backgroundColor: '#eef7f0',
-    borderColor: '#2e7d4f',
+    backgroundColor: "#eef7f0",
+    borderColor: "#2e7d4f",
   },
   text: {
     fontSize: fontSize.sm,

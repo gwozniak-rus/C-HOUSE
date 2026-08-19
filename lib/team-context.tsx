@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createContext,
   useCallback,
@@ -7,13 +7,13 @@ import {
   useMemo,
   useState,
   type PropsWithChildren,
-} from 'react';
+} from "react";
 
-import { useAuth } from './auth-context';
-import { useMyTeams } from './teams-queries';
-import type { Team, TeamMembership, TeamRole } from './types';
+import { useAuth } from "./auth-context";
+import { useMyTeams } from "./teams-queries";
+import type { Team, TeamMembership, TeamRole } from "./types";
 
-const ACTIVE_TEAM_STORAGE_KEY = 'coachhub.activeTeamId';
+const ACTIVE_TEAM_STORAGE_KEY = "coachhub.activeTeamId";
 
 type TeamContextValue = {
   teams: TeamMembership[];
@@ -51,7 +51,9 @@ export function TeamProvider({ children }: PropsWithChildren) {
   // has since left, or belongs to a different account on a shared device.
   const activeMembership = useMemo(() => {
     if (memberships.length === 0) return null;
-    return memberships.find((m) => m.team.id === storedTeamId) ?? memberships[0];
+    return (
+      memberships.find((m) => m.team.id === storedTeamId) ?? memberships[0]
+    );
   }, [memberships, storedTeamId]);
 
   const setActiveTeam = useCallback((teamId: string) => {
@@ -65,13 +67,20 @@ export function TeamProvider({ children }: PropsWithChildren) {
       activeTeam: activeMembership?.team ?? null,
       activeTeamId: activeMembership?.team.id ?? null,
       myRole: activeMembership?.role ?? null,
-      isCoach: activeMembership?.role === 'coach',
+      isCoach: activeMembership?.role === "coach",
       setActiveTeam,
       // The teams query is disabled while signed out, which leaves it pending
       // forever -- so signed-out is never "loading" here.
       loading: Boolean(session) && (!hydrated || isPending),
     }),
-    [memberships, activeMembership, setActiveTeam, session, hydrated, isPending]
+    [
+      memberships,
+      activeMembership,
+      setActiveTeam,
+      session,
+      hydrated,
+      isPending,
+    ],
   );
 
   return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>;
@@ -80,7 +89,7 @@ export function TeamProvider({ children }: PropsWithChildren) {
 export function useTeam() {
   const context = useContext(TeamContext);
   if (!context) {
-    throw new Error('useTeam must be used within a TeamProvider');
+    throw new Error("useTeam must be used within a TeamProvider");
   }
   return context;
 }

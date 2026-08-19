@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import type { Session } from "@supabase/supabase-js";
 import {
   createContext,
   useContext,
@@ -6,9 +6,9 @@ import {
   useMemo,
   useState,
   type PropsWithChildren,
-} from 'react';
+} from "react";
 
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 
 type AuthContextValue = {
   session: Session | null;
@@ -29,16 +29,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setInitializing(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, newSession) => {
+        setSession(newSession);
+      },
+    );
 
     return () => {
       listener.subscription.unsubscribe();
     };
   }, []);
 
-  const value = useMemo(() => ({ session, initializing }), [session, initializing]);
+  const value = useMemo(
+    () => ({ session, initializing }),
+    [session, initializing],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -46,7 +51,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

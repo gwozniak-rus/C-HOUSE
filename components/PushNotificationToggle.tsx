@@ -1,23 +1,34 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { usePushNotifications } from '../lib/push/usePushNotifications';
+import { usePushNotifications } from "../lib/push/usePushNotifications";
 
 export function PushNotificationToggle() {
-  const { isSupported, permission, isSubscribed, isLoading, error, subscribe, unsubscribe } = usePushNotifications();
+  const {
+    isSupported,
+    permission,
+    isSubscribed,
+    isLoading,
+    error,
+    subscribe,
+    unsubscribe,
+  } = usePushNotifications();
 
   if (!isSupported) {
     return (
       <View style={styles.container}>
-        <Text style={styles.helperText}>Push notifications aren&apos;t supported in this browser.</Text>
+        <Text style={styles.helperText}>
+          Push notifications aren&apos;t supported in this browser.
+        </Text>
       </View>
     );
   }
 
-  if (permission === 'denied') {
+  if (permission === "denied") {
     return (
       <View style={styles.container}>
         <Text style={styles.helperText}>
-          Notifications are blocked for this site. Enable them in your browser settings to receive alerts.
+          Notifications are blocked for this site. Enable them in your browser
+          settings to receive alerts.
         </Text>
       </View>
     );
@@ -31,7 +42,11 @@ export function PushNotificationToggle() {
         disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? 'Working…' : isSubscribed ? 'Disable notifications' : 'Enable notifications'}
+          {isLoading
+            ? "Working…"
+            : isSubscribed
+              ? "Disable notifications"
+              : "Enable notifications"}
         </Text>
       </Pressable>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -42,31 +57,31 @@ export function PushNotificationToggle() {
 const styles = StyleSheet.create({
   container: {
     gap: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   button: {
-    backgroundColor: '#111',
+    backgroundColor: "#111",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 12,
   },
   buttonSubscribed: {
-    backgroundColor: '#555',
+    backgroundColor: "#555",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   helperText: {
     fontSize: 14,
-    color: '#777',
-    textAlign: 'center',
+    color: "#777",
+    textAlign: "center",
     maxWidth: 280,
   },
   errorText: {
     fontSize: 13,
-    color: '#c0392b',
-    textAlign: 'center',
+    color: "#c0392b",
+    textAlign: "center",
   },
 });

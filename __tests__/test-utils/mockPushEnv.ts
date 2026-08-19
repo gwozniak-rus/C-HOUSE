@@ -9,9 +9,9 @@
 // jest.resetModules() between installPushEnv() and importing the code under
 // test (see register.test.ts).
 export function installPushEnv() {
-  const Platform = require('react-native').Platform as { OS: string };
+  const Platform = require("react-native").Platform as { OS: string };
   const originalPlatformOS = Platform.OS;
-  Platform.OS = 'web';
+  Platform.OS = "web";
 
   const pushManager = {
     getSubscription: jest.fn().mockResolvedValue(null),
@@ -25,22 +25,32 @@ export function installPushEnv() {
     register: jest.fn().mockResolvedValue(registration),
   };
 
-  const hadNavigator = 'navigator' in globalThis;
-  const previousServiceWorker = (navigator as unknown as { serviceWorker?: unknown }).serviceWorker;
-  (navigator as unknown as { serviceWorker: unknown }).serviceWorker = serviceWorker;
+  const hadNavigator = "navigator" in globalThis;
+  const previousServiceWorker = (
+    navigator as unknown as { serviceWorker?: unknown }
+  ).serviceWorker;
+  (navigator as unknown as { serviceWorker: unknown }).serviceWorker =
+    serviceWorker;
 
-  const previousPushManager = (window as unknown as { PushManager?: unknown }).PushManager;
-  (window as unknown as { PushManager: unknown }).PushManager = function PushManager() {};
+  const previousPushManager = (window as unknown as { PushManager?: unknown })
+    .PushManager;
+  (window as unknown as { PushManager: unknown }).PushManager =
+    function PushManager() {};
 
   const notificationMock = {
-    permission: 'default' as NotificationPermission,
-    requestPermission: jest.fn().mockResolvedValue('granted' as NotificationPermission),
+    permission: "default" as NotificationPermission,
+    requestPermission: jest
+      .fn()
+      .mockResolvedValue("granted" as NotificationPermission),
   };
-  const previousNotification = (globalThis as unknown as { Notification?: unknown }).Notification;
-  (globalThis as unknown as { Notification: unknown }).Notification = notificationMock;
+  const previousNotification = (
+    globalThis as unknown as { Notification?: unknown }
+  ).Notification;
+  (globalThis as unknown as { Notification: unknown }).Notification =
+    notificationMock;
 
-  Object.defineProperty(navigator, 'userAgent', {
-    value: 'jest-test-agent',
+  Object.defineProperty(navigator, "userAgent", {
+    value: "jest-test-agent",
     configurable: true,
   });
 
@@ -52,10 +62,13 @@ export function installPushEnv() {
     restore() {
       (Platform as { OS: string }).OS = originalPlatformOS;
       if (hadNavigator) {
-        (navigator as unknown as { serviceWorker?: unknown }).serviceWorker = previousServiceWorker;
+        (navigator as unknown as { serviceWorker?: unknown }).serviceWorker =
+          previousServiceWorker;
       }
-      (window as unknown as { PushManager?: unknown }).PushManager = previousPushManager;
-      (globalThis as unknown as { Notification?: unknown }).Notification = previousNotification;
+      (window as unknown as { PushManager?: unknown }).PushManager =
+        previousPushManager;
+      (globalThis as unknown as { Notification?: unknown }).Notification =
+        previousNotification;
     },
   };
 }

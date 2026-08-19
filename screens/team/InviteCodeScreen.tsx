@@ -1,15 +1,19 @@
-import * as Clipboard from 'expo-clipboard';
-import { useState } from 'react';
-import { Share, StyleSheet, Switch, Text, View } from 'react-native';
+import * as Clipboard from "expo-clipboard";
+import { useState } from "react";
+import { Share, StyleSheet, Switch, Text, View } from "react-native";
 
-import { Banner } from '../../components/ui/Banner';
-import { Button } from '../../components/ui/Button';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { ScreenContainer } from '../../components/ui/ScreenContainer';
-import { useTeam } from '../../lib/team-context';
-import { mapSupabaseError } from '../../lib/teams';
-import { useInviteCode, useRegenerateCode, useToggleJoining } from '../../lib/teams-queries';
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
+import { Banner } from "../../components/ui/Banner";
+import { Button } from "../../components/ui/Button";
+import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
+import { ScreenContainer } from "../../components/ui/ScreenContainer";
+import { useTeam } from "../../lib/team-context";
+import { mapSupabaseError } from "../../lib/teams";
+import {
+  useInviteCode,
+  useRegenerateCode,
+  useToggleJoining,
+} from "../../lib/teams-queries";
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
 
 export function InviteCodeScreen() {
   const { activeTeam, activeTeamId } = useTeam();
@@ -68,11 +72,17 @@ export function InviteCodeScreen() {
       <Text style={styles.label}>Invite code</Text>
       <View style={styles.codeCard}>
         <Text testID="invite-code-value" style={styles.code}>
-          {isPending ? '········' : inviteCode?.code}
+          {isPending ? "········" : inviteCode?.code}
         </Text>
       </View>
 
-      {copied ? <Banner testID="invite-code-copied" message="Copied to clipboard" tone="success" /> : null}
+      {copied ? (
+        <Banner
+          testID="invite-code-copied"
+          message="Copied to clipboard"
+          tone="success"
+        />
+      ) : null}
 
       <View style={styles.buttonRow}>
         <Button
@@ -98,8 +108,8 @@ export function InviteCodeScreen() {
           <Text style={styles.switchLabel}>Accepting new players</Text>
           <Text style={styles.switchSubtitle}>
             {isAccepting
-              ? 'Anyone with this code can join instantly.'
-              : 'This code is paused -- no one can join with it right now.'}
+              ? "Anyone with this code can join instantly."
+              : "This code is paused -- no one can join with it right now."}
           </Text>
         </View>
         <Switch
@@ -136,33 +146,33 @@ export function InviteCodeScreen() {
 const styles = StyleSheet.create({
   label: {
     fontSize: fontSize.sm,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textMuted,
   },
   codeCard: {
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.md,
     paddingVertical: spacing.xl,
-    alignItems: 'center',
+    alignItems: "center",
   },
   code: {
     fontSize: 36,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 6,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     color: colors.text,
   },
   buttonRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.md,
   },
   buttonHalf: {
     flex: 1,
   },
   switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: colors.borderSubtle,
     borderRadius: radius.md,
@@ -176,7 +186,7 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     fontSize: fontSize.body,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.text,
   },
   switchSubtitle: {

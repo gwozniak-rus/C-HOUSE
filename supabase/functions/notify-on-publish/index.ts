@@ -10,15 +10,15 @@
 // Requires NOTIFY_ON_PUBLISH_SECRET / VAPID_SUBJECT / VAPID_PUBLIC_KEY /
 // VAPID_PRIVATE_KEY as function secrets (supabase/functions/.env locally,
 // `supabase secrets set` remotely).
-import { createClient } from 'npm:@supabase/supabase-js@2';
-import webpush from 'npm:web-push@3.6.7';
+import { createClient } from "npm:@supabase/supabase-js@2";
+import webpush from "npm:web-push@3.6.7";
 
-import type { Database } from '../../../lib/database.types.ts';
+import type { Database } from "../../../lib/database.types.ts";
 
-const NOTIFY_ON_PUBLISH_SECRET = Deno.env.get('NOTIFY_ON_PUBLISH_SECRET');
-const VAPID_SUBJECT = Deno.env.get('VAPID_SUBJECT');
-const VAPID_PUBLIC_KEY = Deno.env.get('VAPID_PUBLIC_KEY');
-const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY');
+const NOTIFY_ON_PUBLISH_SECRET = Deno.env.get("NOTIFY_ON_PUBLISH_SECRET");
+const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT");
+const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY");
+const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY");
 
 if (VAPID_SUBJECT && VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
@@ -42,14 +42,14 @@ type ResolvedContent = {
 // published, so a stale or replayed call can't leak a draft.
 async function resolveContent(
   admin: ReturnType<typeof createClient<Database>>,
-  payload: NotifyPayload
+  payload: NotifyPayload,
 ): Promise<ResolvedContent | null> {
-  if (payload.content_type !== 'announcement') return null;
+  if (payload.content_type !== "announcement") return null;
 
   const { data, error } = await admin
-    .from('announcements')
-    .select('title, body, created_by, published_at')
-    .eq('id', payload.record_id)
+    .from("announcements")
+    .select("title, body, created_by, published_at")
+    .eq("id", payload.record_id)
     .maybeSingle();
 
   if (error || !data || !data.published_at) return null;
@@ -58,50 +58,53 @@ async function resolveContent(
 }
 
 Deno.serve(async (req) => {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
   }
 
-  if (!NOTIFY_ON_PUBLISH_SECRET || req.headers.get('x-webhook-secret') !== NOTIFY_ON_PUBLISH_SECRET) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+  if (
+    !NOTIFY_ON_PUBLISH_SECRET ||
+    req.headers.get("x-webhook-secret") !== NOTIFY_ON_PUBLISH_SECRET
+  ) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   if (!VAPID_SUBJECT || !VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
-    console.error('notify-on-publish: VAPID secrets are not configured');
-    return new Response(JSON.stringify({ error: 'Push not configured' }), {
+    console.error("notify-on-publish: VAPID secrets are not configured");
+    return new Response(JSON.stringify({ error: "Push not configured" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   const payload = (await req.json()) as NotifyPayload;
 
   const admin = createClient<Database>(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    { auth: { persistSession: false } }
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    { auth: { persistSession: false } },
   );
 
   const content = await resolveContent(admin, payload);
   if (!content) {
     return new Response(JSON.stringify({ sent: 0, failed: 0, skipped: true }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   const { data: members, error: membersError } = await admin
-    .from('team_members')
-    .select('user_id')
-    .eq('team_id', payload.team_id);
+    .from("team_members")
+    .select("user_id")
+    .eq("team_id", payload.team_id);
 
   if (membersError) {
     return new Response(JSON.stringify({ error: membersError.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -113,21 +116,21 @@ Deno.serve(async (req) => {
   if (recipientIds.length === 0) {
     return new Response(JSON.stringify({ sent: 0, failed: 0 }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   const { data: subscriptions, error: subsError } = await admin
-    .from('push_subscriptions')
-    .select('id, endpoint, p256dh, web_push_auth_key')
-    .in('user_id', recipientIds)
-    .eq('platform', 'web')
-    .eq('is_active', true);
+    .from("push_subscriptions")
+    .select("id, endpoint, p256dh, web_push_auth_key")
+    .in("user_id", recipientIds)
+    .eq("platform", "web")
+    .eq("is_active", true);
 
   if (subsError) {
     return new Response(JSON.stringify({ error: subsError.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -135,7 +138,7 @@ Deno.serve(async (req) => {
     title: content.title,
     body: content.body,
     tag: `${payload.content_type}-${payload.record_id}`,
-    url: '/',
+    url: "/",
   });
 
   let sent = 0;
@@ -143,7 +146,11 @@ Deno.serve(async (req) => {
 
   await Promise.all(
     (subscriptions ?? []).map(async (subscription) => {
-      if (!subscription.endpoint || !subscription.p256dh || !subscription.web_push_auth_key) {
+      if (
+        !subscription.endpoint ||
+        !subscription.p256dh ||
+        !subscription.web_push_auth_key
+      ) {
         return;
       }
 
@@ -157,7 +164,7 @@ Deno.serve(async (req) => {
             },
           },
           notificationPayload,
-          { TTL: 60 * 60 * 24 }
+          { TTL: 60 * 60 * 24 },
         );
         sent += 1;
       } catch (err) {
@@ -166,16 +173,22 @@ Deno.serve(async (req) => {
         if (statusCode === 404 || statusCode === 410) {
           // Subscription is gone on the browser's end (uninstalled, cleared
           // storage, etc.) — stop sending to it instead of retrying forever.
-          await admin.from('push_subscriptions').update({ is_active: false }).eq('id', subscription.id);
+          await admin
+            .from("push_subscriptions")
+            .update({ is_active: false })
+            .eq("id", subscription.id);
         } else {
-          console.error(`notify-on-publish: send failed for subscription ${subscription.id}`, err);
+          console.error(
+            `notify-on-publish: send failed for subscription ${subscription.id}`,
+            err,
+          );
         }
       }
-    })
+    }),
   );
 
   return new Response(JSON.stringify({ sent, failed }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   });
 });

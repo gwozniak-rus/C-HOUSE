@@ -34,15 +34,15 @@ doesn't is out of scope for MVP.
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| Daily practice plans | Pinned, dated tab — not a chat feed |
-| Reusable templates | Coaches build plans, itineraries, and packing lists from a desktop view and reuse them |
-| Real read receipts | Auto-tracked on view, not simulated via message likes |
-| Announcements & reminders | Same pinned, persistent pattern as practice plans |
-| Travel itineraries & packing lists | Templated and reusable across trips |
-| Push notifications | Sent on publish, so players don't have to check speculatively |
-| Team branding | Custom colors/logo per team |
+| Feature                            | Description                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| Daily practice plans               | Pinned, dated tab — not a chat feed                                                    |
+| Reusable templates                 | Coaches build plans, itineraries, and packing lists from a desktop view and reuse them |
+| Real read receipts                 | Auto-tracked on view, not simulated via message likes                                  |
+| Announcements & reminders          | Same pinned, persistent pattern as practice plans                                      |
+| Travel itineraries & packing lists | Templated and reusable across trips                                                    |
+| Push notifications                 | Sent on publish, so players don't have to check speculatively                          |
+| Team branding                      | Custom colors/logo per team                                                            |
 
 **Explicitly out of scope for MVP:** coach-to-player chat, team group chat,
 stat tracking, video/film sharing, parent accounts, multi-team org
@@ -51,14 +51,14 @@ the source-of-truth layer, not a better chat client.
 
 ## Tech Stack
 
-| Layer | Choice |
-|---|---|
-| UI (mobile, coach desktop, web) | React Native + Expo |
-| Database / Auth / Realtime | Supabase (Postgres) |
-| Frontend hosting | Vercel |
-| Backend hosting | Supabase managed infrastructure |
-| Push notifications | Web Push API (Expo Push planned for native, Phase 2) |
-| Distribution | Progressive Web App (PWA) for MVP |
+| Layer                           | Choice                                               |
+| ------------------------------- | ---------------------------------------------------- |
+| UI (mobile, coach desktop, web) | React Native + Expo                                  |
+| Database / Auth / Realtime      | Supabase (Postgres)                                  |
+| Frontend hosting                | Vercel                                               |
+| Backend hosting                 | Supabase managed infrastructure                      |
+| Push notifications              | Web Push API (Expo Push planned for native, Phase 2) |
+| Distribution                    | Progressive Web App (PWA) for MVP                    |
 
 **Why PWA first:** a single Expo codebase produces the mobile UI, the
 coach desktop view, and the PWA web build. Shipping as a PWA removes the

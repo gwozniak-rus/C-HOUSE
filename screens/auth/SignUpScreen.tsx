@@ -1,5 +1,5 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,18 +9,18 @@ import {
   StyleSheet,
   Text,
   TextInput,
-} from 'react-native';
+} from "react-native";
 
-import { supabase } from '../../lib/supabase';
-import type { AuthStackParamList } from '../../navigation/AuthNavigator';
+import { supabase } from "../../lib/supabase";
+import type { AuthStackParamList } from "../../navigation/AuthNavigator";
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
+type Props = NativeStackScreenProps<AuthStackParamList, "SignUp">;
 
 export function SignUpScreen({ navigation }: Props) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSignUp() {
@@ -34,16 +34,19 @@ export function SignUpScreen({ navigation }: Props) {
     });
     setSubmitting(false);
     if (error) {
-      Alert.alert('Sign up failed', error.message);
+      Alert.alert("Sign up failed", error.message);
       return;
     }
-    Alert.alert('Check your email', 'Confirm your address to finish signing up.');
+    Alert.alert(
+      "Check your email",
+      "Confirm your address to finish signing up.",
+    );
   }
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <Text style={styles.title}>Create account</Text>
 
@@ -97,7 +100,10 @@ export function SignUpScreen({ navigation }: Props) {
         )}
       </Pressable>
 
-      <Pressable testID="sign-up-goto-sign-in" onPress={() => navigation.navigate('SignIn')}>
+      <Pressable
+        testID="sign-up-goto-sign-in"
+        onPress={() => navigation.navigate("SignIn")}
+      >
         <Text style={styles.link}>Already have an account? Sign in</Text>
       </Pressable>
     </KeyboardAvoidingView>
@@ -107,41 +113,41 @@ export function SignUpScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 24,
     gap: 12,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d0d0d0',
+    borderColor: "#d0d0d0",
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#111',
+    backgroundColor: "#111",
     borderRadius: 8,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   link: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 16,
-    color: '#333',
+    color: "#333",
   },
 });

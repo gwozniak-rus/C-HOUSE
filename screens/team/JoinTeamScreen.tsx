@@ -1,23 +1,23 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useState } from "react";
+import { StyleSheet, Text } from "react-native";
 
-import { Banner } from '../../components/ui/Banner';
-import { Button } from '../../components/ui/Button';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { ScreenContainer } from '../../components/ui/ScreenContainer';
-import { TextField } from '../../components/ui/TextField';
-import { useTeam } from '../../lib/team-context';
-import { mapSupabaseError, previewInviteCode } from '../../lib/teams';
-import { useJoinTeam } from '../../lib/teams-queries';
-import { colors, fontSize } from '../../lib/theme';
-import type { AppStackParamList } from '../../navigation/AppNavigator';
-import type { InviteCodePreview } from '../../lib/types';
+import { Banner } from "../../components/ui/Banner";
+import { Button } from "../../components/ui/Button";
+import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
+import { ScreenContainer } from "../../components/ui/ScreenContainer";
+import { TextField } from "../../components/ui/TextField";
+import { useTeam } from "../../lib/team-context";
+import { mapSupabaseError, previewInviteCode } from "../../lib/teams";
+import { useJoinTeam } from "../../lib/teams-queries";
+import { colors, fontSize } from "../../lib/theme";
+import type { AppStackParamList } from "../../navigation/AppNavigator";
+import type { InviteCodePreview } from "../../lib/types";
 
-type Props = NativeStackScreenProps<AppStackParamList, 'JoinTeam'>;
+type Props = NativeStackScreenProps<AppStackParamList, "JoinTeam">;
 
 export function JoinTeamScreen({ navigation }: Props) {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [checking, setChecking] = useState(false);
   const [preview, setPreview] = useState<InviteCodePreview | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +37,9 @@ export function JoinTeamScreen({ navigation }: Props) {
       }
       setPreview(result);
     } catch (caught) {
-      setError(mapSupabaseError(caught, "Couldn't check that code. Please try again."));
+      setError(
+        mapSupabaseError(caught, "Couldn't check that code. Please try again."),
+      );
     } finally {
       setChecking(false);
     }
@@ -50,17 +52,21 @@ export function JoinTeamScreen({ navigation }: Props) {
       const teamId = await joinTeam.mutateAsync(code);
       setActiveTeam(teamId);
       setPreview(null);
-      navigation.replace('TeamHome');
+      navigation.replace("TeamHome");
     } catch (caught) {
       setPreview(null);
-      setError(mapSupabaseError(caught, "Couldn't join that team. Please try again."));
+      setError(
+        mapSupabaseError(caught, "Couldn't join that team. Please try again."),
+      );
     }
   }
 
   return (
     <ScreenContainer scroll>
       <Text style={styles.title}>Join a team</Text>
-      <Text style={styles.subtitle}>Enter the code your coach shared with you.</Text>
+      <Text style={styles.subtitle}>
+        Enter the code your coach shared with you.
+      </Text>
 
       <Banner testID="join-team-error" message={error} />
 
@@ -90,9 +96,9 @@ export function JoinTeamScreen({ navigation }: Props) {
       <ConfirmDialog
         testID="join-team-confirm"
         visible={preview !== null}
-        title={preview ? `Join ${preview.teamName}?` : ''}
+        title={preview ? `Join ${preview.teamName}?` : ""}
         message={
-          preview?.role === 'coach'
+          preview?.role === "coach"
             ? "You'll join as a coach."
             : "You'll join as a player."
         }
@@ -108,7 +114,7 @@ export function JoinTeamScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.display,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   subtitle: {
@@ -116,8 +122,8 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   codeInput: {
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     letterSpacing: 2,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
 });

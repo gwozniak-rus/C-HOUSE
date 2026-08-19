@@ -1,15 +1,19 @@
-import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Banner } from '../../components/ui/Banner';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { ScreenContainer } from '../../components/ui/ScreenContainer';
-import { useAuth } from '../../lib/auth-context';
-import { useTeam } from '../../lib/team-context';
-import { mapSupabaseError } from '../../lib/teams';
-import { useRemoveMember, useRoster, useSetMemberStatus } from '../../lib/teams-queries';
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
-import type { RosterMember } from '../../lib/types';
+import { Banner } from "../../components/ui/Banner";
+import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
+import { ScreenContainer } from "../../components/ui/ScreenContainer";
+import { useAuth } from "../../lib/auth-context";
+import { useTeam } from "../../lib/team-context";
+import { mapSupabaseError } from "../../lib/teams";
+import {
+  useRemoveMember,
+  useRoster,
+  useSetMemberStatus,
+} from "../../lib/teams-queries";
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
+import type { RosterMember } from "../../lib/types";
 
 export function RosterScreen() {
   const { session } = useAuth();
@@ -19,14 +23,16 @@ export function RosterScreen() {
   const removeMember = useRemoveMember(activeTeamId);
 
   const [error, setError] = useState<string | null>(null);
-  const [pendingRemoval, setPendingRemoval] = useState<RosterMember | null>(null);
+  const [pendingRemoval, setPendingRemoval] = useState<RosterMember | null>(
+    null,
+  );
 
   async function handleToggleStatus(member: RosterMember) {
     setError(null);
     try {
       await setMemberStatus.mutateAsync({
         userId: member.userId,
-        status: member.status === 'active' ? 'inactive' : 'active',
+        status: member.status === "active" ? "inactive" : "active",
       });
     } catch (caught) {
       setError(mapSupabaseError(caught));
@@ -57,7 +63,8 @@ export function RosterScreen() {
         ListEmptyComponent={
           !isPending ? (
             <Text style={styles.empty}>
-              No one has joined yet. Share your invite code to get players on the roster.
+              No one has joined yet. Share your invite code to get players on
+              the roster.
             </Text>
           ) : null
         }
@@ -76,7 +83,7 @@ export function RosterScreen() {
       <ConfirmDialog
         testID="roster-remove-confirm"
         visible={pendingRemoval !== null}
-        title={pendingRemoval ? `Remove ${pendingRemoval.displayName}?` : ''}
+        title={pendingRemoval ? `Remove ${pendingRemoval.displayName}?` : ""}
         message="They'll lose access to this team and will need a new invite code to rejoin."
         confirmLabel="Remove"
         destructive
@@ -106,11 +113,16 @@ function RosterRow({
       <View style={styles.info}>
         <Text style={styles.name}>
           {member.displayName}
-          {isSelf ? ' (you)' : ''}
+          {isSelf ? " (you)" : ""}
         </Text>
         <View style={styles.badges}>
-          <Badge label={member.role === 'coach' ? 'Coach' : 'Player'} tone="role" />
-          {member.status === 'inactive' ? <Badge label="Inactive" tone="muted" /> : null}
+          <Badge
+            label={member.role === "coach" ? "Coach" : "Player"}
+            tone="role"
+          />
+          {member.status === "inactive" ? (
+            <Badge label="Inactive" tone="muted" />
+          ) : null}
         </View>
       </View>
 
@@ -122,7 +134,7 @@ function RosterRow({
             onPress={onToggleStatus}
           >
             <Text style={styles.actionText}>
-              {member.status === 'active' ? 'Mark inactive' : 'Mark active'}
+              {member.status === "active" ? "Mark inactive" : "Mark active"}
             </Text>
           </Pressable>
           <Pressable
@@ -138,10 +150,14 @@ function RosterRow({
   );
 }
 
-function Badge({ label, tone }: { label: string; tone: 'role' | 'muted' }) {
+function Badge({ label, tone }: { label: string; tone: "role" | "muted" }) {
   return (
-    <View style={[styles.badge, tone === 'muted' && styles.badgeMuted]}>
-      <Text style={[styles.badgeText, tone === 'muted' && styles.badgeTextMuted]}>{label}</Text>
+    <View style={[styles.badge, tone === "muted" && styles.badgeMuted]}>
+      <Text
+        style={[styles.badgeText, tone === "muted" && styles.badgeTextMuted]}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
@@ -150,7 +166,7 @@ const styles = StyleSheet.create({
   empty: {
     fontSize: fontSize.sm,
     color: colors.textMuted,
-    textAlign: 'center',
+    textAlign: "center",
     paddingVertical: spacing.xl,
   },
   separator: {
@@ -158,9 +174,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.borderSubtle,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: spacing.md,
     gap: spacing.sm,
   },
@@ -170,11 +186,11 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: fontSize.body,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.text,
   },
   badges: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.xs,
   },
   badge: {
@@ -184,11 +200,11 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   badgeMuted: {
-    backgroundColor: '#fdf0ee',
+    backgroundColor: "#fdf0ee",
   },
   badgeText: {
     fontSize: fontSize.xs,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textMuted,
   },
   badgeTextMuted: {
@@ -203,9 +219,9 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: fontSize.xs,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.text,
-    textAlign: 'right',
+    textAlign: "right",
   },
   removeText: {
     color: colors.danger,

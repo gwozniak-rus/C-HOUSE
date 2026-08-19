@@ -1,0 +1,7 @@
+.expo/
+coverage/
+dist/
+web-build/
+supabase/.branches/
+supabase/.temp/
+package-lock.json

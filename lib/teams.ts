@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 import type {
   InviteCode,
   InviteCodePreview,
@@ -7,32 +7,34 @@ import type {
   Team,
   TeamMembership,
   TeamRole,
-} from './types';
+} from "./types";
 
 // Messages the database raises deliberately for end users -- redeem_invite_code()
 // and prevent_last_coach_removal() in
 // 20260809224954_teams_membership_invites.sql. Anything not on this list is a
 // Postgres/PostgREST internal and must not reach a coach's screen.
 const USER_FACING_DB_ERRORS = [
-  'Invalid invite code',
-  'Invite code has been revoked',
-  'Invite code has expired',
-  'Invite code has reached its usage limit',
-  'Cannot remove the last coach from a team',
+  "Invalid invite code",
+  "Invite code has been revoked",
+  "Invite code has expired",
+  "Invite code has reached its usage limit",
+  "Cannot remove the last coach from a team",
 ] as const;
 
 export function mapSupabaseError(
   error: unknown,
-  fallback = 'Something went wrong. Please try again.'
+  fallback = "Something went wrong. Please try again.",
 ): string {
   const message =
-    typeof error === 'object' && error !== null && 'message' in error
+    typeof error === "object" && error !== null && "message" in error
       ? String((error as { message: unknown }).message)
-      : typeof error === 'string'
+      : typeof error === "string"
         ? error
-        : '';
+        : "";
 
-  return USER_FACING_DB_ERRORS.find((known) => message.includes(known)) ?? fallback;
+  return (
+    USER_FACING_DB_ERRORS.find((known) => message.includes(known)) ?? fallback
+  );
 }
 
 /**
@@ -42,10 +44,10 @@ export function mapSupabaseError(
  */
 export async function listMyTeams(userId: string): Promise<TeamMembership[]> {
   const { data, error } = await supabase
-    .from('team_members')
-    .select('role, status, joined_at, teams!inner(*)')
-    .eq('user_id', userId)
-    .order('joined_at', { ascending: true });
+    .from("team_members")
+    .select("role, status, joined_at, teams!inner(*)")
+    .eq("user_id", userId)
+    .order("joined_at", { ascending: true });
 
   if (error) throw error;
 
@@ -72,7 +74,7 @@ export async function createTeam(input: {
   timezone?: string;
 }): Promise<Team> {
   const { data, error } = await supabase
-    .from('teams')
+    .from("teams")
     .insert({
       name: input.name.trim(),
       created_by: input.createdBy,
@@ -88,7 +90,7 @@ export async function createTeam(input: {
 }
 
 function compareRosterMembers(a: RosterMember, b: RosterMember): number {
-  if (a.role !== b.role) return a.role === 'coach' ? -1 : 1;
+  if (a.role !== b.role) return a.role === "coach" ? -1 : 1;
   const aKey = a.lastName ?? a.displayName;
   const bKey = b.lastName ?? b.displayName;
   return aKey.localeCompare(bKey);
@@ -101,9 +103,11 @@ function compareRosterMembers(a: RosterMember, b: RosterMember): number {
  */
 export async function getRoster(teamId: string): Promise<RosterMember[]> {
   const { data, error } = await supabase
-    .from('team_members')
-    .select('user_id, role, status, joined_at, profiles!inner(first_name, last_name, display_name)')
-    .eq('team_id', teamId);
+    .from("team_members")
+    .select(
+      "user_id, role, status, joined_at, profiles!inner(first_name, last_name, display_name)",
+    )
+    .eq("team_id", teamId);
 
   if (error) throw error;
 
@@ -127,12 +131,15 @@ export async function getRoster(teamId: string): Promise<RosterMember[]> {
     .sort(compareRosterMembers);
 }
 
-export async function removeMember(teamId: string, userId: string): Promise<void> {
+export async function removeMember(
+  teamId: string,
+  userId: string,
+): Promise<void> {
   const { error } = await supabase
-    .from('team_members')
+    .from("team_members")
     .delete()
-    .eq('team_id', teamId)
-    .eq('user_id', userId);
+    .eq("team_id", teamId)
+    .eq("user_id", userId);
 
   if (error) throw error;
 }
@@ -140,13 +147,13 @@ export async function removeMember(teamId: string, userId: string): Promise<void
 export async function setMemberStatus(
   teamId: string,
   userId: string,
-  status: MemberStatus
+  status: MemberStatus,
 ): Promise<void> {
   const { error } = await supabase
-    .from('team_members')
+    .from("team_members")
     .update({ status })
-    .eq('team_id', teamId)
-    .eq('user_id', userId);
+    .eq("team_id", teamId)
+    .eq("user_id", userId);
 
   if (error) throw error;
 }
@@ -156,12 +163,14 @@ export async function setMemberStatus(
  * not -- `revoked_at` is the on/off switch for joining, so a paused code still
  * has to be readable in order to be switched back on.
  */
-export async function getCurrentInviteCode(teamId: string): Promise<InviteCode | null> {
+export async function getCurrentInviteCode(
+  teamId: string,
+): Promise<InviteCode | null> {
   const { data, error } = await supabase
-    .from('team_invite_codes')
-    .select('*')
-    .eq('team_id', teamId)
-    .order('created_at', { ascending: false })
+    .from("team_invite_codes")
+    .select("*")
+    .eq("team_id", teamId)
+    .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
@@ -169,11 +178,14 @@ export async function getCurrentInviteCode(teamId: string): Promise<InviteCode |
   return data;
 }
 
-export async function createInviteCode(teamId: string, createdBy: string): Promise<InviteCode> {
+export async function createInviteCode(
+  teamId: string,
+  createdBy: string,
+): Promise<InviteCode> {
   // `code` is populated by the generate_invite_code() column default.
   const { data, error } = await supabase
-    .from('team_invite_codes')
-    .insert({ team_id: teamId, role: 'player', created_by: createdBy })
+    .from("team_invite_codes")
+    .insert({ team_id: teamId, role: "player", created_by: createdBy })
     .select()
     .single();
 
@@ -182,8 +194,14 @@ export async function createInviteCode(teamId: string, createdBy: string): Promi
 }
 
 /** Returns the team's current code, minting one if it has never had any. */
-export async function ensureInviteCode(teamId: string, createdBy: string): Promise<InviteCode> {
-  return (await getCurrentInviteCode(teamId)) ?? (await createInviteCode(teamId, createdBy));
+export async function ensureInviteCode(
+  teamId: string,
+  createdBy: string,
+): Promise<InviteCode> {
+  return (
+    (await getCurrentInviteCode(teamId)) ??
+    (await createInviteCode(teamId, createdBy))
+  );
 }
 
 /**
@@ -195,16 +213,16 @@ export async function ensureInviteCode(teamId: string, createdBy: string): Promi
 export async function setJoiningEnabled(
   codeId: string,
   enabled: boolean,
-  userId: string
+  userId: string,
 ): Promise<void> {
   const { error } = await supabase
-    .from('team_invite_codes')
+    .from("team_invite_codes")
     .update(
       enabled
         ? { revoked_at: null, revoked_by: null }
-        : { revoked_at: new Date().toISOString(), revoked_by: userId }
+        : { revoked_at: new Date().toISOString(), revoked_by: userId },
     )
-    .eq('id', codeId);
+    .eq("id", codeId);
 
   if (error) throw error;
 }
@@ -216,7 +234,7 @@ export async function setJoiningEnabled(
 export async function regenerateInviteCode(
   teamId: string,
   previousCodeId: string | null,
-  userId: string
+  userId: string,
 ): Promise<InviteCode> {
   const created = await createInviteCode(teamId, userId);
   if (previousCodeId) {
@@ -230,8 +248,10 @@ export async function regenerateInviteCode(
  * is coach-only under RLS, so this has to go through the security-definer
  * preview_invite_code() RPC. Null means invalid, revoked, expired, or full.
  */
-export async function previewInviteCode(code: string): Promise<InviteCodePreview | null> {
-  const { data, error } = await supabase.rpc('preview_invite_code', {
+export async function previewInviteCode(
+  code: string,
+): Promise<InviteCodePreview | null> {
+  const { data, error } = await supabase.rpc("preview_invite_code", {
     p_code: normalizeInviteCode(code),
   });
 
@@ -249,7 +269,7 @@ export async function previewInviteCode(code: string): Promise<InviteCodePreview
 
 /** Joins the team behind a code. Returns the joined team's id. */
 export async function redeemInviteCode(code: string): Promise<string> {
-  const { data, error } = await supabase.rpc('redeem_invite_code', {
+  const { data, error } = await supabase.rpc("redeem_invite_code", {
     p_code: normalizeInviteCode(code),
   });
 
@@ -262,5 +282,5 @@ export async function redeemInviteCode(code: string): Promise<string> {
  * ambiguous characters, so a pasted code is safe to upcase and strip.
  */
 export function normalizeInviteCode(code: string): string {
-  return code.replace(/\s/g, '').toUpperCase();
+  return code.replace(/\s/g, "").toUpperCase();
 }

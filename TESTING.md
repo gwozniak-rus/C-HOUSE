@@ -44,7 +44,7 @@ In `@testing-library/react-native` v14, `await` every one of these:
 
 ```tsx
 await render(<MyScreen />);
-await fireEvent.press(screen.getByTestId('submit'));
+await fireEvent.press(screen.getByTestId("submit"));
 const { result } = await renderHook(() => useMyHook(), { wrapper: MyProvider });
 ```
 
@@ -71,10 +71,12 @@ needs those stubbed in per-test. Use `installPushEnv()` from
 `__tests__/test-utils/mockPushEnv.ts`:
 
 ```ts
-import { installPushEnv } from '../../test-utils/mockPushEnv';
+import { installPushEnv } from "../../test-utils/mockPushEnv";
 
 let env: ReturnType<typeof installPushEnv>;
-beforeEach(() => { env = installPushEnv(); });
+beforeEach(() => {
+  env = installPushEnv();
+});
 afterEach(() => env.restore());
 ```
 
@@ -86,10 +88,10 @@ It sets `Platform.OS = 'web'`, and stubs `navigator.serviceWorker`,
 
 It does `if (!supabaseUrl || !supabaseAnonKey) throw ...`, and lots of modules
 import it transitively. `jest.setup.ts` sets harmless dummy values for
-`EXPO_PUBLIC_SUPABASE_URL` / `_ANON_KEY` / `_VAPID_PUBLIC_KEY` so the *real*
+`EXPO_PUBLIC_SUPABASE_URL` / `_ANON_KEY` / `_VAPID_PUBLIC_KEY` so the _real_
 module is always importable, even in tests that don't care about Supabase.
 
-When a test *does* care about what Supabase calls happen, mock the module
+When a test _does_ care about what Supabase calls happen, mock the module
 instead of hitting the real (dummy-configured) client — see the next point.
 
 ### 4. Mocking `lib/supabase` (or any local module) safely
@@ -100,21 +102,21 @@ file, including `const` declarations above them in your source. This means:
 ```ts
 // BROKEN — mockSupabase is still `undefined` when the factory runs
 const mockSupabase = createMockSupabase();
-jest.mock('../../lib/supabase', () => ({ supabase: mockSupabase }));
+jest.mock("../../lib/supabase", () => ({ supabase: mockSupabase }));
 ```
 
 fails with "Cannot read properties of undefined". The fix used throughout
 this suite: make the factory **self-contained** — do the `require()` for any
-helper *inside* the factory body, where it only runs when the mocked module
+helper _inside_ the factory body, where it only runs when the mocked module
 is actually first imported (lazy, not hoisted):
 
 ```ts
-jest.mock('../../lib/supabase', () => ({
-  supabase: require('../test-utils/mockSupabase').createMockSupabase(),
+jest.mock("../../lib/supabase", () => ({
+  supabase: require("../test-utils/mockSupabase").createMockSupabase(),
 }));
 
-import { supabase } from '../../lib/supabase';
-import type { MockSupabase } from '../test-utils/mockSupabase';
+import { supabase } from "../../lib/supabase";
+import type { MockSupabase } from "../test-utils/mockSupabase";
 
 const mockSupabase = supabase as unknown as MockSupabase; // now safe to use in tests
 ```
@@ -122,7 +124,7 @@ const mockSupabase = supabase as unknown as MockSupabase; // now safe to use in 
 `createMockSupabase()` gives you `auth.getSession`, `auth.onAuthStateChange`,
 `auth.signInWithPassword`, `auth.signUp`, `auth.signOut` as configurable
 `jest.fn()`s, and a bare `from` you configure per-test (Supabase's query
-builder is both chainable *and* awaitable at every step — see
+builder is both chainable _and_ awaitable at every step — see
 `subscription.test.ts` for the pattern of building `{ select, eq, maybeSingle }`
 objects inline per test rather than trying to generalize it). It also exposes
 a bare `rpc` for RPC-based calls like `redeem_invite_code` (see `teams.test.ts`).
@@ -160,11 +162,11 @@ Say you add `lib/formatDuration.ts`, a pure function. No mocking needed:
 
 ```ts
 // __tests__/lib/formatDuration.test.ts
-import { formatDuration } from '../../lib/formatDuration';
+import { formatDuration } from "../../lib/formatDuration";
 
-describe('formatDuration', () => {
-  it('formats minutes under an hour', () => {
-    expect(formatDuration(45)).toBe('45m');
+describe("formatDuration", () => {
+  it("formats minutes under an hour", () => {
+    expect(formatDuration(45)).toBe("45m");
   });
 });
 ```
@@ -187,14 +189,14 @@ and calls `supabase.from('sessions')...`. Follow `HomeScreen.test.tsx`:
 
 `npm run test:coverage` after this initial suite:
 
-| Area | Coverage |
-|---|---|
-| `lib/auth-context.tsx` | 100% |
-| `lib/push/*` (except the small untested `register.ts` catch branch) | ~98% |
-| `components/PushNotificationToggle.tsx` | 100% |
-| `screens/HomeScreen.tsx`, `screens/auth/*` | 100% statements |
-| `navigation/*` | 100% |
-| `lib/supabase.ts` | 0% (intentional — it's a thin client-construction module always replaced by the mock; testing it would mean testing the real `@supabase/supabase-js` + `AsyncStorage` wiring, not app logic) |
+| Area                                                                | Coverage                                                                                                                                                                                     |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/auth-context.tsx`                                              | 100%                                                                                                                                                                                         |
+| `lib/push/*` (except the small untested `register.ts` catch branch) | ~98%                                                                                                                                                                                         |
+| `components/PushNotificationToggle.tsx`                             | 100%                                                                                                                                                                                         |
+| `screens/HomeScreen.tsx`, `screens/auth/*`                          | 100% statements                                                                                                                                                                              |
+| `navigation/*`                                                      | 100%                                                                                                                                                                                         |
+| `lib/supabase.ts`                                                   | 0% (intentional — it's a thin client-construction module always replaced by the mock; testing it would mean testing the real `@supabase/supabase-js` + `AsyncStorage` wiring, not app logic) |
 
 61 tests across 10 suites, all passing.
 

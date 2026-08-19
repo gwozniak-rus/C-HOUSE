@@ -3,16 +3,16 @@
 // StyleSheet block seven more times; components/ui/ consumes it.
 
 export const colors = {
-  text: '#111',
-  textMuted: '#555',
-  textSubtle: '#777',
-  border: '#d0d0d0',
-  borderSubtle: '#e6e6e6',
-  surface: '#fff',
-  surfaceMuted: '#f4f4f5',
-  primary: '#111',
-  onPrimary: '#fff',
-  danger: '#c0392b',
+  text: "#111",
+  textMuted: "#555",
+  textSubtle: "#777",
+  border: "#d0d0d0",
+  borderSubtle: "#e6e6e6",
+  surface: "#fff",
+  surfaceMuted: "#f4f4f5",
+  primary: "#111",
+  onPrimary: "#fff",
+  danger: "#c0392b",
 } as const;
 
 export const spacing = {

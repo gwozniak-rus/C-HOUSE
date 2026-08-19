@@ -1,14 +1,14 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from "@react-navigation/native";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { AuthProvider } from './lib/auth-context';
-import { registerServiceWorker } from './lib/push/register';
-import { queryClient } from './lib/queryClient';
-import { TeamProvider } from './lib/team-context';
-import { RootNavigator } from './navigation/RootNavigator';
+import { AuthProvider } from "./lib/auth-context";
+import { registerServiceWorker } from "./lib/push/register";
+import { queryClient } from "./lib/queryClient";
+import { TeamProvider } from "./lib/team-context";
+import { RootNavigator } from "./navigation/RootNavigator";
 
 export default function App() {
   // Registered at app boot (not just when a screen mounts the push hook) so

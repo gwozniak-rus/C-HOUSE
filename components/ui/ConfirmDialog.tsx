@@ -1,7 +1,7 @@
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from "react-native";
 
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
-import { Button } from './Button';
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
+import { Button } from "./Button";
 
 type Props = {
   visible: boolean;
@@ -26,8 +26,8 @@ export function ConfirmDialog({
   visible,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   destructive = false,
   loading = false,
   onConfirm,
@@ -35,7 +35,12 @@ export function ConfirmDialog({
   testID,
 }: Props) {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
       <View style={styles.backdrop}>
         <View testID={testID} style={styles.card}>
           <Text style={styles.title}>{title}</Text>
@@ -52,7 +57,7 @@ export function ConfirmDialog({
             <Button
               testID={`${testID}-confirm`}
               label={confirmLabel}
-              variant={destructive ? 'danger' : 'primary'}
+              variant={destructive ? "danger" : "primary"}
               onPress={onConfirm}
               loading={loading}
               style={styles.action}
@@ -67,13 +72,13 @@ export function ConfirmDialog({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    alignItems: "center",
+    justifyContent: "center",
     padding: spacing.xl,
   },
   card: {
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.lg,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   message: {
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.md,
     marginTop: spacing.sm,
   },

@@ -1,23 +1,24 @@
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
-import { supabase } from '../supabase';
-import type { TablesInsert } from '../database.types';
-import { urlBase64ToUint8Array } from './utils';
+import { supabase } from "../supabase";
+import type { TablesInsert } from "../database.types";
+import { urlBase64ToUint8Array } from "./utils";
 
 const VAPID_PUBLIC_KEY = process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY;
 
 export function isPushSupported(): boolean {
   return (
-    Platform.OS === 'web' &&
-    typeof navigator !== 'undefined' &&
-    'serviceWorker' in navigator &&
-    typeof window !== 'undefined' &&
-    'PushManager' in window
+    Platform.OS === "web" &&
+    typeof navigator !== "undefined" &&
+    "serviceWorker" in navigator &&
+    typeof window !== "undefined" &&
+    "PushManager" in window
   );
 }
 
-export function getNotificationPermission(): NotificationPermission | 'unsupported' {
-  if (!isPushSupported()) return 'unsupported';
+export function getNotificationPermission():
+  NotificationPermission | "unsupported" {
+  if (!isPushSupported()) return "unsupported";
   return Notification.permission;
 }
 
@@ -45,15 +46,18 @@ type SubscriptionJSON = {
 // requires the ON CONFLICT predicate to match a partial index exactly, and
 // PostgREST doesn't expose a way to supply one. Look the row up and
 // update-or-insert explicitly instead.
-export async function persistSubscription(userId: string, subscriptionJson: SubscriptionJSON): Promise<void> {
+export async function persistSubscription(
+  userId: string,
+  subscriptionJson: SubscriptionJSON,
+): Promise<void> {
   const { endpoint, keys } = subscriptionJson;
   if (!endpoint || !keys?.p256dh || !keys?.auth) {
-    throw new Error('Push subscription is missing required fields');
+    throw new Error("Push subscription is missing required fields");
   }
 
-  const row: TablesInsert<'push_subscriptions'> = {
+  const row: TablesInsert<"push_subscriptions"> = {
     user_id: userId,
-    platform: 'web',
+    platform: "web",
     endpoint,
     p256dh: keys.p256dh,
     web_push_auth_key: keys.auth,
@@ -63,32 +67,37 @@ export async function persistSubscription(userId: string, subscriptionJson: Subs
   };
 
   const { data: existing, error: lookupError } = await supabase
-    .from('push_subscriptions')
-    .select('id')
-    .eq('endpoint', endpoint)
-    .eq('platform', 'web')
+    .from("push_subscriptions")
+    .select("id")
+    .eq("endpoint", endpoint)
+    .eq("platform", "web")
     .maybeSingle();
 
   if (lookupError) throw lookupError;
 
   const { error } = existing
-    ? await supabase.from('push_subscriptions').update(row).eq('id', existing.id)
-    : await supabase.from('push_subscriptions').insert(row);
+    ? await supabase
+        .from("push_subscriptions")
+        .update(row)
+        .eq("id", existing.id)
+    : await supabase.from("push_subscriptions").insert(row);
 
   if (error) throw error;
 }
 
 export async function subscribeToPush(userId: string): Promise<void> {
   if (!isPushSupported()) {
-    throw new Error('Push notifications are not supported in this browser');
+    throw new Error("Push notifications are not supported in this browser");
   }
   if (!VAPID_PUBLIC_KEY) {
-    throw new Error('Missing EXPO_PUBLIC_VAPID_PUBLIC_KEY. Check your .env file.');
+    throw new Error(
+      "Missing EXPO_PUBLIC_VAPID_PUBLIC_KEY. Check your .env file.",
+    );
   }
 
   const permission = await Notification.requestPermission();
-  if (permission !== 'granted') {
-    throw new Error('Notification permission was not granted');
+  if (permission !== "granted") {
+    throw new Error("Notification permission was not granted");
   }
 
   const registration = await getReadyRegistration();
@@ -113,10 +122,10 @@ export async function unsubscribeFromPush(): Promise<void> {
   await subscription.unsubscribe();
 
   const { error } = await supabase
-    .from('push_subscriptions')
+    .from("push_subscriptions")
     .update({ is_active: false })
-    .eq('endpoint', endpoint)
-    .eq('platform', 'web');
+    .eq("endpoint", endpoint)
+    .eq("platform", "web");
 
   if (error) throw error;
 }

@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { useAuth } from '../auth-context';
-import { registerServiceWorker } from './register';
+import { useAuth } from "../auth-context";
+import { registerServiceWorker } from "./register";
 import {
   getExistingSubscription,
   getNotificationPermission,
   isPushSupported,
   subscribeToPush,
   unsubscribeFromPush,
-} from './subscription';
+} from "./subscription";
 
 type PushNotificationsState = {
   isSupported: boolean;
-  permission: NotificationPermission | 'unsupported';
+  permission: NotificationPermission | "unsupported";
   isSubscribed: boolean;
   isLoading: boolean;
   error: string | null;
@@ -24,7 +24,9 @@ export function usePushNotifications(): PushNotificationsState {
   const { session } = useAuth();
   const supported = isPushSupported();
 
-  const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>(getNotificationPermission);
+  const [permission, setPermission] = useState<
+    NotificationPermission | "unsupported"
+  >(getNotificationPermission);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(supported);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,8 @@ export function usePushNotifications(): PushNotificationsState {
         if (!cancelled) setIsSubscribed(subscription !== null);
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : String(err));
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -56,7 +59,7 @@ export function usePushNotifications(): PushNotificationsState {
 
   const subscribe = useCallback(async () => {
     if (!session?.user.id) {
-      setError('You must be signed in to enable notifications');
+      setError("You must be signed in to enable notifications");
       return;
     }
 
@@ -86,5 +89,13 @@ export function usePushNotifications(): PushNotificationsState {
     }
   }, []);
 
-  return { isSupported: supported, permission, isSubscribed, isLoading, error, subscribe, unsubscribe };
+  return {
+    isSupported: supported,
+    permission,
+    isSubscribed,
+    isLoading,
+    error,
+    subscribe,
+    unsubscribe,
+  };
 }

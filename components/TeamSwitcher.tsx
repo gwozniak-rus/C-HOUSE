@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useState } from "react";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { useTeam } from '../lib/team-context';
-import { colors, fontSize, radius, spacing } from '../lib/theme';
+import { useTeam } from "../lib/team-context";
+import { colors, fontSize, radius, spacing } from "../lib/theme";
 
 // Header control for the active team. Visually a no-op beyond a static label
 // when the coach/player has exactly one team -- the modal picker only opens
@@ -36,7 +36,12 @@ export function TeamSwitcher() {
         <Text style={styles.chevron}>▾</Text>
       </Pressable>
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+      <Modal
+        visible={open}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+      >
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <View style={styles.sheet}>
             {teams.map(({ team }) => (
@@ -50,7 +55,10 @@ export function TeamSwitcher() {
                 }}
               >
                 <Text
-                  style={[styles.optionText, team.id === activeTeamId && styles.optionTextActive]}
+                  style={[
+                    styles.optionText,
+                    team.id === activeTeamId && styles.optionTextActive,
+                  ]}
                 >
                   {team.name}
                 </Text>
@@ -69,18 +77,18 @@ const styles = StyleSheet.create({
   },
   staticLabelText: {
     fontSize: fontSize.lg,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs,
     maxWidth: 220,
   },
   triggerText: {
     fontSize: fontSize.lg,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   chevron: {
@@ -89,13 +97,13 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-start",
+    alignItems: "center",
     paddingTop: 90,
   },
   sheet: {
-    width: '90%',
+    width: "90%",
     maxWidth: 360,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -110,6 +118,6 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   optionTextActive: {
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

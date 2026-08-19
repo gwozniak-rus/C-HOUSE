@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { useEffect, useState } from "react";
+import { StyleSheet, Text } from "react-native";
 
-import { PushNotificationToggle } from '../components/PushNotificationToggle';
-import { Banner } from '../components/ui/Banner';
-import { Button } from '../components/ui/Button';
-import { ScreenContainer } from '../components/ui/ScreenContainer';
-import { TextField } from '../components/ui/TextField';
-import { useAuth } from '../lib/auth-context';
-import { supabase } from '../lib/supabase';
-import { mapSupabaseError } from '../lib/teams';
-import { useProfile, useUpdateProfile } from '../lib/teams-queries';
-import { colors, fontSize, spacing } from '../lib/theme';
+import { PushNotificationToggle } from "../components/PushNotificationToggle";
+import { Banner } from "../components/ui/Banner";
+import { Button } from "../components/ui/Button";
+import { ScreenContainer } from "../components/ui/ScreenContainer";
+import { TextField } from "../components/ui/TextField";
+import { useAuth } from "../lib/auth-context";
+import { supabase } from "../lib/supabase";
+import { mapSupabaseError } from "../lib/teams";
+import { useProfile, useUpdateProfile } from "../lib/teams-queries";
+import { colors, fontSize, spacing } from "../lib/theme";
 
 export function ProfileScreen() {
   const { session } = useAuth();
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -27,23 +27,32 @@ export function ProfileScreen() {
   // uncontrolled by the query so mid-edit refetches don't clobber typing.
   useEffect(() => {
     if (!profile) return;
-    setFirstName(profile.first_name ?? '');
-    setLastName(profile.last_name ?? '');
-    setPhone(profile.phone ?? '');
+    setFirstName(profile.first_name ?? "");
+    setLastName(profile.last_name ?? "");
+    setPhone(profile.phone ?? "");
   }, [profile]);
 
   async function handleSave() {
     setError(null);
     setSaved(false);
     if (!firstName.trim() || !lastName.trim()) {
-      setError('First and last name are required.');
+      setError("First and last name are required.");
       return;
     }
     try {
-      await updateProfile.mutateAsync({ firstName, lastName, phone: phone || null });
+      await updateProfile.mutateAsync({
+        firstName,
+        lastName,
+        phone: phone || null,
+      });
       setSaved(true);
     } catch (caught) {
-      setError(mapSupabaseError(caught, 'Could not save your profile. Please try again.'));
+      setError(
+        mapSupabaseError(
+          caught,
+          "Could not save your profile. Please try again.",
+        ),
+      );
     }
   }
 
@@ -53,7 +62,9 @@ export function ProfileScreen() {
       <Text style={styles.email}>{session?.user.email}</Text>
 
       <Banner testID="profile-error" message={error} />
-      {saved ? <Banner testID="profile-saved" message="Saved" tone="success" /> : null}
+      {saved ? (
+        <Banner testID="profile-saved" message="Saved" tone="success" />
+      ) : null}
 
       <TextField
         label="First name"
@@ -110,7 +121,7 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.title,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   email: {

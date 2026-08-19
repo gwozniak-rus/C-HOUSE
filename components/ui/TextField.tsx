@@ -1,6 +1,12 @@
-import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type TextInputProps,
+} from "react-native";
 
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
 
 type Props = TextInputProps & {
   label?: string;
@@ -25,7 +31,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.sm,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textMuted,
   },
   input: {

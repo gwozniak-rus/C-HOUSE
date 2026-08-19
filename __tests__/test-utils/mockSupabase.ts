@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import type { Session } from "@supabase/supabase-js";
 
 type AuthChangeCallback = (event: string, session: Session | null) => void;
 
@@ -18,8 +18,8 @@ type AuthChangeCallback = (event: string, session: Session | null) => void;
 export function createMockSupabase() {
   return {
     auth: {
-      getSession: jest.fn<Promise<{ data: { session: Session | null } }>, []>(() =>
-        Promise.resolve({ data: { session: null } })
+      getSession: jest.fn<Promise<{ data: { session: Session | null } }>, []>(
+        () => Promise.resolve({ data: { session: null } }),
       ),
       onAuthStateChange: jest.fn<
         { data: { subscription: { unsubscribe: jest.Mock } } },
@@ -40,9 +40,10 @@ export function createMockSupabase() {
     from: jest.fn(),
     // Return value configured per-test, e.g.:
     //   mockSupabase.rpc.mockResolvedValueOnce({ data: [...], error: null })
-    rpc: jest.fn<Promise<{ data: unknown; error: { message: string } | null }>, [string, unknown?]>(
-      () => Promise.resolve({ data: null, error: null })
-    ),
+    rpc: jest.fn<
+      Promise<{ data: unknown; error: { message: string } | null }>,
+      [string, unknown?]
+    >(() => Promise.resolve({ data: null, error: null })),
   };
 }
 

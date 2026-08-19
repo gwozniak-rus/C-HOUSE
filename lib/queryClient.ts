@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 
 // Exported as a factory as well as a singleton so tests can build a throwaway
 // client per case (retries off, no cache bleed between tests).

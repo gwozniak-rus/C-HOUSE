@@ -1,9 +1,9 @@
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
-import { useAuth } from '../lib/auth-context';
-import { useTeam } from '../lib/team-context';
-import { AppNavigator } from './AppNavigator';
-import { AuthNavigator } from './AuthNavigator';
+import { useAuth } from "../lib/auth-context";
+import { useTeam } from "../lib/team-context";
+import { AppNavigator } from "./AppNavigator";
+import { AuthNavigator } from "./AuthNavigator";
 
 export function RootNavigator() {
   const { session, initializing } = useAuth();
@@ -37,7 +37,7 @@ export function RootNavigator() {
 const styles = StyleSheet.create({
   splash: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

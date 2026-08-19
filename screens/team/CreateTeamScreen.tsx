@@ -1,24 +1,24 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useState } from "react";
+import { StyleSheet, Text } from "react-native";
 
-import { Banner } from '../../components/ui/Banner';
-import { Button } from '../../components/ui/Button';
-import { ScreenContainer } from '../../components/ui/ScreenContainer';
-import { TextField } from '../../components/ui/TextField';
-import { useTeam } from '../../lib/team-context';
-import { mapSupabaseError } from '../../lib/teams';
-import { useCreateTeam } from '../../lib/teams-queries';
-import { colors, fontSize } from '../../lib/theme';
-import type { AppStackParamList } from '../../navigation/AppNavigator';
+import { Banner } from "../../components/ui/Banner";
+import { Button } from "../../components/ui/Button";
+import { ScreenContainer } from "../../components/ui/ScreenContainer";
+import { TextField } from "../../components/ui/TextField";
+import { useTeam } from "../../lib/team-context";
+import { mapSupabaseError } from "../../lib/teams";
+import { useCreateTeam } from "../../lib/teams-queries";
+import { colors, fontSize } from "../../lib/theme";
+import type { AppStackParamList } from "../../navigation/AppNavigator";
 
-type Props = NativeStackScreenProps<AppStackParamList, 'CreateTeam'>;
+type Props = NativeStackScreenProps<AppStackParamList, "CreateTeam">;
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
 
 export function CreateTeamScreen({ navigation }: Props) {
-  const [name, setName] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('');
+  const [name, setName] = useState("");
+  const [primaryColor, setPrimaryColor] = useState("");
   const [error, setError] = useState<string | null>(null);
   const { setActiveTeam } = useTeam();
   const createTeam = useCreateTeam();
@@ -27,13 +27,13 @@ export function CreateTeamScreen({ navigation }: Props) {
     setError(null);
 
     if (!name.trim()) {
-      setError('Give your team a name.');
+      setError("Give your team a name.");
       return;
     }
     // Mirrors the CHECK on teams.primary_color, so a typo is caught here
     // rather than coming back as a constraint violation.
     if (primaryColor.trim() && !HEX_COLOR.test(primaryColor.trim())) {
-      setError('Team color must be a hex value like #1d4ed8.');
+      setError("Team color must be a hex value like #1d4ed8.");
       return;
     }
 
@@ -45,9 +45,14 @@ export function CreateTeamScreen({ navigation }: Props) {
       // Select it before navigating so TeamHome resolves to the new team as
       // soon as the invalidated teams query comes back.
       setActiveTeam(team.id);
-      navigation.replace('TeamHome');
+      navigation.replace("TeamHome");
     } catch (caught) {
-      setError(mapSupabaseError(caught, 'Could not create the team. Please try again.'));
+      setError(
+        mapSupabaseError(
+          caught,
+          "Could not create the team. Please try again.",
+        ),
+      );
     }
   }
 
@@ -55,7 +60,8 @@ export function CreateTeamScreen({ navigation }: Props) {
     <ScreenContainer scroll>
       <Text style={styles.title}>Create a team</Text>
       <Text style={styles.subtitle}>
-        You&apos;ll be the coach. Once it exists you&apos;ll get a code to share with your players.
+        You&apos;ll be the coach. Once it exists you&apos;ll get a code to share
+        with your players.
       </Text>
 
       <Banner testID="create-team-error" message={error} />
@@ -91,7 +97,7 @@ export function CreateTeamScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.display,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.text,
   },
   subtitle: {

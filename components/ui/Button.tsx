@@ -5,11 +5,11 @@ import {
   Text,
   type StyleProp,
   type ViewStyle,
-} from 'react-native';
+} from "react-native";
 
-import { colors, fontSize, radius, spacing } from '../../lib/theme';
+import { colors, fontSize, radius, spacing } from "../../lib/theme";
 
-type Variant = 'primary' | 'secondary' | 'danger';
+type Variant = "primary" | "secondary" | "danger";
 
 type Props = {
   label: string;
@@ -24,7 +24,7 @@ type Props = {
 export function Button({
   label,
   onPress,
-  variant = 'primary',
+  variant = "primary",
   loading = false,
   disabled = false,
   testID,
@@ -39,12 +39,24 @@ export function Button({
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       onPress={onPress}
       disabled={isDisabled}
-      style={[styles.base, styles[variant], isDisabled && styles.disabled, style]}
+      style={[
+        styles.base,
+        styles[variant],
+        isDisabled && styles.disabled,
+        style,
+      ]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'secondary' ? colors.text : colors.onPrimary} />
+        <ActivityIndicator
+          color={variant === "secondary" ? colors.text : colors.onPrimary}
+        />
       ) : (
-        <Text style={[styles.label, variant === 'secondary' && styles.labelSecondary]}>
+        <Text
+          style={[
+            styles.label,
+            variant === "secondary" && styles.labelSecondary,
+          ]}
+        >
           {label}
         </Text>
       )}
@@ -57,8 +69,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   primary: {
     backgroundColor: colors.primary,
@@ -77,7 +89,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.onPrimary,
     fontSize: fontSize.body,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   labelSecondary: {
     color: colors.text,
