@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { ProfileMenu } from "../components/ProfileMenu";
 import { TeamSwitcher } from "../components/TeamSwitcher";
 import { useTeam } from "../lib/team-context";
 import { ProfileScreen } from "../screens/ProfileScreen";
@@ -29,7 +30,10 @@ export function AppNavigator() {
   const initialRouteName = teams.length > 0 ? "TeamHome" : "Welcome";
 
   return (
-    <Stack.Navigator initialRouteName={initialRouteName}>
+    <Stack.Navigator
+      initialRouteName={initialRouteName}
+      screenOptions={{ headerRight: () => <ProfileMenu /> }}
+    >
       <Stack.Screen
         name="Welcome"
         component={WelcomeScreen}

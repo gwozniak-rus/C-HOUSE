@@ -94,14 +94,18 @@ npm install
 npx expo start --web
 ```
 
-Requires a linked Supabase project (`supabase link`) and a `.env.local`
-populated from `.env.example`. See [`development_guide.md`](./development_guide.md)
+Requires a linked Supabase project (`supabase link`) and a `.env`
+populated from `.env.example`. See
+[`documentation/development-guide.md`](./documentation/development-guide.md)
 for full local setup, including running migrations and seeding data.
 
 ## Documentation
 
-- [`development_guide.md`](./development_guide.md) — data model, user
-  flows, build plan, and open questions
+See [`documentation/`](./documentation) for the full set:
+
+- [`documentation/development-guide.md`](./documentation/development-guide.md) — setup, running the app, testing, coding practices
+- [`documentation/architecture.md`](./documentation/architecture.md) — tech stack, project structure, data model
+- [`documentation/goals.md`](./documentation/goals.md) — product scope and roadmap
 
 ## Roadmap
 

@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 import {
   fireEvent,
   render,
@@ -26,14 +25,6 @@ async function renderScreen() {
 }
 
 describe("<SignInScreen />", () => {
-  beforeEach(() => {
-    jest.spyOn(Alert, "alert").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("calls signInWithPassword with the entered credentials", async () => {
     mockSignInWithPassword.mockResolvedValue({ error: null });
     const { navigation } = await renderScreen();
@@ -55,10 +46,10 @@ describe("<SignInScreen />", () => {
       }),
     );
     expect(navigation.navigate).not.toHaveBeenCalled();
-    expect(Alert.alert).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("sign-in-error")).toBeNull();
   });
 
-  it("shows an alert when sign in fails", async () => {
+  it("shows an inline error banner when sign in fails", async () => {
     mockSignInWithPassword.mockResolvedValue({
       error: { message: "Invalid credentials" },
     });
@@ -67,10 +58,7 @@ describe("<SignInScreen />", () => {
     await fireEvent.press(screen.getByTestId("sign-in-submit"));
 
     await waitFor(() =>
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Sign in failed",
-        "Invalid credentials",
-      ),
+      expect(screen.getByText("Invalid credentials")).toBeTruthy(),
     );
   });
 

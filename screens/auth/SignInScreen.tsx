@@ -1,17 +1,19 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
 } from "react-native";
 
+import { Banner } from "../../components/ui/Banner";
+import { Button } from "../../components/ui/Button";
+import { ScreenContainer } from "../../components/ui/ScreenContainer";
+import { TextField } from "../../components/ui/TextField";
 import { supabase } from "../../lib/supabase";
+import { colors, fontSize, spacing } from "../../lib/theme";
 import type { AuthStackParamList } from "../../navigation/AuthNavigator";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "SignIn">;
@@ -20,107 +22,85 @@ export function SignInScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSignIn() {
+    setError(null);
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     setSubmitting(false);
-    if (error) {
-      Alert.alert("Sign in failed", error.message);
+    if (signInError) {
+      setError(signInError.message);
+      return;
     }
     // On success, the auth-context session listener flips RootNavigator to AppNavigator.
   }
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={styles.flex}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <Text style={styles.title}>Sign in</Text>
+      <ScreenContainer centered>
+        <Text style={styles.title}>Sign in</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        autoComplete="email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        autoCapitalize="none"
-        autoComplete="password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <Banner testID="sign-in-error" message={error} />
 
-      <Pressable
-        testID="sign-in-submit"
-        style={[styles.button, submitting && styles.buttonDisabled]}
-        onPress={handleSignIn}
-        disabled={submitting}
-      >
-        {submitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Sign in</Text>
-        )}
-      </Pressable>
+        <TextField
+          placeholder="Email"
+          autoCapitalize="none"
+          autoComplete="email"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextField
+          placeholder="Password"
+          autoCapitalize="none"
+          autoComplete="password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <Pressable
-        testID="sign-in-goto-sign-up"
-        onPress={() => navigation.navigate("SignUp")}
-      >
-        <Text style={styles.link}>Don&apos;t have an account? Sign up</Text>
-      </Pressable>
+        <Button
+          testID="sign-in-submit"
+          label="Sign in"
+          onPress={handleSignIn}
+          loading={submitting}
+          style={styles.submit}
+        />
+
+        <Pressable
+          testID="sign-in-goto-sign-up"
+          onPress={() => navigation.navigate("SignUp")}
+        >
+          <Text style={styles.link}>Don&apos;t have an account? Sign up</Text>
+        </Pressable>
+      </ScreenContainer>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  flex: {
     flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    gap: 12,
   },
   title: {
-    fontSize: 28,
+    fontSize: fontSize.display,
     fontWeight: "700",
-    marginBottom: 12,
+    color: colors.text,
+    marginBottom: spacing.xs,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#d0d0d0",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#111",
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+  submit: {
+    marginTop: spacing.xs,
   },
   link: {
     textAlign: "center",
-    marginTop: 16,
-    color: "#333",
+    marginTop: spacing.lg,
+    color: colors.textMuted,
   },
 });

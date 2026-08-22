@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 import {
   fireEvent,
   render,
@@ -24,15 +23,7 @@ async function renderScreen() {
 }
 
 describe("<SignUpScreen />", () => {
-  beforeEach(() => {
-    jest.spyOn(Alert, "alert").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it("calls signUp with the entered fields and shows a confirmation alert on success", async () => {
+  it("calls signUp with the entered fields and shows an inline confirmation on success", async () => {
     mockSignUp.mockResolvedValue({ error: null });
     await renderScreen();
 
@@ -61,13 +52,15 @@ describe("<SignUpScreen />", () => {
         options: { data: { first_name: "Alex", last_name: "Coach" } },
       }),
     );
-    expect(Alert.alert).toHaveBeenCalledWith(
-      "Check your email",
-      "Confirm your address to finish signing up.",
-    );
+    expect(
+      screen.getByText(
+        "Check your email to confirm your address and finish signing up.",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByTestId("sign-up-error")).toBeNull();
   });
 
-  it("shows an alert and no confirmation when sign up fails", async () => {
+  it("shows an inline error and no confirmation when sign up fails", async () => {
     mockSignUp.mockResolvedValue({
       error: { message: "Email already registered" },
     });
@@ -76,12 +69,9 @@ describe("<SignUpScreen />", () => {
     await fireEvent.press(screen.getByTestId("sign-up-submit"));
 
     await waitFor(() =>
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Sign up failed",
-        "Email already registered",
-      ),
+      expect(screen.getByText("Email already registered")).toBeTruthy(),
     );
-    expect(Alert.alert).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("sign-up-confirmation")).toBeNull();
   });
 
   it("navigates to SignIn when the link is pressed", async () => {

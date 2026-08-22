@@ -13,6 +13,11 @@
 -- Passwords are hashed with pgcrypto, which lives in the `extensions` schema
 -- (see 20260809224933_extensions_and_helpers.sql), hence the qualified calls.
 
+-- The token columns below have no default and are NOT NULL-able in GoTrue's
+-- Go structs even though the column itself allows NULL; leaving them out of
+-- this insert means they default to NULL, which makes GoTrue fail with
+-- "sql: Scan error on column index 3, name \"confirmation_token\": converting
+-- NULL to string is unsupported" on every subsequent login attempt.
 insert into auth.users (
   instance_id,
   id,
@@ -24,7 +29,15 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
+  updated_at,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change,
+  email_change_token_current,
+  phone_change,
+  phone_change_token,
+  reauthentication_token
 )
 values
   (
@@ -38,7 +51,8 @@ values
     '{"provider":"email","providers":["email"]}',
     '{"first_name":"Dana","last_name":"Whitfield"}',
     now(),
-    now()
+    now(),
+    '', '', '', '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -51,7 +65,8 @@ values
     '{"provider":"email","providers":["email"]}',
     '{"first_name":"Marcus","last_name":"Ellery"}',
     now(),
-    now()
+    now(),
+    '', '', '', '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -64,7 +79,8 @@ values
     '{"provider":"email","providers":["email"]}',
     '{"first_name":"Tobias","last_name":"Renn"}',
     now(),
-    now()
+    now(),
+    '', '', '', '', '', '', '', ''
   );
 
 -- GoTrue requires a matching identity row before email/password sign-in works.
